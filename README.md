@@ -244,3 +244,6 @@ After the scripts execute it may take a few minutes for the Metrics or Uptime Ch
 * [Stackdriver Kubernetes Monitoring](https://cloud.google.com/monitoring/kubernetes-engine/)
 * [Managing Uptime Checks](https://cloud.google.com/monitoring/uptime-checks/management)
 * [Terraform Google Cloud Provider](https://www.terraform.io/docs/providers/google/index.html)
+
+
+**This is not an officially supported Google product**
