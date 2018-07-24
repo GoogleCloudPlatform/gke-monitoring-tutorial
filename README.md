@@ -1,27 +1,24 @@
 # Monitoring with Stackdriver on Kubernetes Engine
 
-Table of Contents
-=================
-
-* [Monitoring with Stackdriver on Kubernetes Engine](#monitoring-with-stackdriver-on-kubernetes-engine)
-  * [Introduction](#introduction)
-  * [Architecture](#architecture)
-  * [Prerequisites](#prerequisites)
-    * [Enable GCP APIs](#enable-gcp-apis)
-    * [Install Cloud SDK](#install-cloud-sdk)
-    * [Install Terraform](#install-terraform)
-    * [Configure Authentication](#configure-authentication)
-  * [Deployment](#deployment)
-    * [How does it work?](#how-does-it-work)
-    * [Running Terraform](#running-terraform)
-  * [Validation](#validation)
-    * [Create a new Stackdriver Account](#create-a-new-stackdriver-account)
-    * [Using Metrics Explorer](#using-metrics-explorer)
-    * [Setting up a Custom Alert](#setting-up-a-custom-alert)
-    * [Creating an Uptime Check](#creating-an-uptime-check)
-  * [Teardown](#teardown)
-  * [Troubleshooting](#troubleshooting)
-  * [Relevant Material](#relevant-material)
+## Table of Contents
+* [Introduction](#introduction)
+* [Architecture](#architecture)
+* [Prerequisites](#prerequisites)
+  * [Enable GCP APIs](#enable-gcp-apis)
+  * [Install Cloud SDK](#install-cloud-sdk)
+  * [Install Terraform](#install-terraform)
+  * [Configure Authentication](#configure-authentication)
+* [Deployment](#deployment)
+  * [How does it work?](#how-does-it-work)
+  * [Running Terraform](#running-terraform)
+* [Validation](#validation)
+  * [Create a new Stackdriver Account](#create-a-new-stackdriver-account)
+  * [Using Metrics Explorer](#using-metrics-explorer)
+  * [Setting up a Custom Alert](#setting-up-a-custom-alert)
+  * [Creating an Uptime Check](#creating-an-uptime-check)
+* [Teardown](#teardown)
+* [Troubleshooting](#troubleshooting)
+* [Relevant Material](#relevant-material)
 
 ## Introduction
 Stackdriver Monitoring is used to visualize the performance, uptime, and overall health of your applications.  The Stackdriver Monitoring console allows you to visualize data across all projects in GCP in a single interface.
