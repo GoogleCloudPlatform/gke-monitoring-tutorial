@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#! /usr/bin/env bash
 
 # Copyright 2018 Google LLC
 #
@@ -59,15 +59,27 @@ fi
 
 echo "Step 1 of the validation passed. App is deployed."
 
-# Grab the external IP and port of the service to confirm that demo app
-#   deployed correctly.
-EXT_IP=$(kubectl get svc "$APP_NAME" -n default \
-  -ojsonpath='{.status.loadBalancer.ingress[0].ip}')
+# Loop for up to 60 seconds waiting for service's IP address
+EXT_IP=""
+for ((i=0; i < 30 ; i++)); do
+  EXT_IP=$(kubectl get svc "$APP_NAME" -n default \
+    -ojsonpath='{.status.loadBalancer.ingress[0].ip}')
+  [ ! -z "$EXT_IP" ] && break
+  sleep 2
+done
+if [ -z "$EXT_IP" ]
+then
+  echo "ERROR - Timed out waiting for IP"
+  exit 1
+fi
+
+# Get service's port
 EXT_PORT=$(kubectl get service "$APP_NAME" -n default \
   -o=jsonpath='{.spec.ports[0].port}')
 
 echo "App is available at: http://$EXT_IP:$EXT_PORT"
 
+# Test service availability
 [ "$(curl -s -o /dev/null -w '%{http_code}' "$EXT_IP:$EXT_PORT"/)" \
   -eq 200 ] || exit 1
 

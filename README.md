@@ -88,7 +88,7 @@ The terraform configuration takes two parameters to determine where the Kubernet
 For simplicity, these parameters should be specified in a file named terraform.tfvars, in the terraform directory. To generate this file based on your glcoud defaults, run:
 
 ./generate-tfvars.sh
-This will generate a terraform/terraform.tfvars file with the following keys. The values themselves will match the output of gcloud config list:
+This will generate a terraform/terraform.tfvars file with the following keys. The values themselves will match the output of `gcloud config list`:
 ```
 # Contents of terraform.tfvars
 project="YOUR_PROJECT"
