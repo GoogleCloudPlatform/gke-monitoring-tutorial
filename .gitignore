@@ -20,6 +20,7 @@ Session.vim
 
 # Local .terraform directories
 **/.terraform/*
+terraform.tfvars
 
 # .tfstate files
 *.tfstate
