@@ -20,7 +20,7 @@
 # "-                                                       -"
 # "---------------------------------------------------------"
 
-# gcloud and kubectl are required for this POC
+# gcloud and kubectl are required for this demo
 command -v gcloud >/dev/null 2>&1 || { \
  echo >&2 "I require gcloud but it's not installed.  Aborting."; exit 1; }
 
