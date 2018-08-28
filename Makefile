@@ -15,8 +15,6 @@
 # Make will use bash instead of sh
 SHELL := /usr/bin/env bash
 
-ROOT := ${CURDIR}
-
 # lint is the first target in the file so it will get picked up when you just
 #   run 'make' on its own
 lint: check_shell check_shebangs check_python check_golang check_terraform \

@@ -40,8 +40,7 @@ cd "$ROOT/terraform" || exit; CLUSTER_NAME=$(terraform output cluster_name) \
 gcloud container clusters get-credentials "$CLUSTER_NAME" --zone="$ZONE"
 
 SUCCESSFUL_ROLLOUT=false
-for _ in {1..30}
-do
+for _ in {1..30}; do
   ROLLOUT=$(kubectl rollout status -n default \
     --watch=false deployment/"$APP_NAME") &> /dev/null
   if [[ $ROLLOUT = *"$APP_MESSAGE"* ]]; then
@@ -61,7 +60,7 @@ echo "Step 1 of the validation passed. App is deployed."
 
 # Loop for up to 60 seconds waiting for service's IP address
 EXT_IP=""
-for ((i=0; i < 30 ; i++)); do
+for _ in {1..30}; do
   EXT_IP=$(kubectl get svc "$APP_NAME" -n default \
     -ojsonpath='{.status.loadBalancer.ingress[0].ip}')
   [ ! -z "$EXT_IP" ] && break
