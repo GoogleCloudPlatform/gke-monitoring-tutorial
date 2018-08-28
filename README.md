@@ -4,10 +4,10 @@
 * [Introduction](#introduction)
 * [Architecture](#architecture)
 * [Prerequisites](#prerequisites)
-  * [Enable GCP APIs](#enable-gcp-apis)
   * [Install Cloud SDK](#install-cloud-sdk)
   * [Install Terraform](#install-terraform)
   * [Configure Authentication](#configure-authentication)
+  * [Enable GCP APIs](#enable-gcp-apis)
 * [Deployment](#deployment)
   * [How does it work?](#how-does-it-work)
   * [Running Terraform](#running-terraform)
@@ -41,20 +41,6 @@ The steps described in this document require the installation of several tools a
 
 You'll need access to a Google Cloud Project with billing enabled. See **Creating and Managing Projects** (https://cloud.google.com/resource-manager/docs/creating-managing-projects) for creating a new project. To make cleanup easier it's recommended to create a new project.
 
-### Enable GCP APIs
-
-The following APIs need to be enabled:
-* Cloud Resource Manager API
-* Kubernetes Engine API
-* Stackdriver Logging API
-* Stackdriver Monitoring API
-
-A script is provided in the /scripts folder named **enable-apis.sh** that will enable these three API's.  Follow these steps to execute the script:
-1. In the GCP console, change to the project you want to enable the API's for.
-2. Click on the **Activate Cloud Shell Console** Visit the **APIs & Services** section of the GCP Console.
-3. Upload the **enable-apis.sh** script in the **Cloud Shell** window.
-4. Execute the script.
-
 ### Install Cloud SDK
 
 The Google Cloud SDK is used to interact with your GCP resources. [Installation instructions](https://cloud.google.com/sdk/downloads) for multiple platforms are available online.
@@ -67,30 +53,49 @@ Terraform is used to automate the manipulation of cloud infrastructure. Its [ins
 
 The Terraform configuration will execute against your GCP environment and create a Kubernetes Engine cluster running a simple application.  The configuration will use your personal account to build out these resources.  To setup the default account the configuration will use, run the following command to select the appropriate account:
 
-`gcloud auth application-default login`
+```console
+$ gcloud auth application-default login
+```
+
+### Enable GCP APIs
+
+In order for the deployment automation to work, the following APIs need to be enabled:
+* Kubernetes Engine API
+* Stackdriver Logging API
+* Stackdriver Monitoring API
+
+You can enable them using the following command:
+
+```console
+$ gcloud services enable container.googleapis.com \
+   logging.googleapis.com monitoring.googleapis.com
+```
 
 ## Deployment
 
 ### How does it work?
 
-Following the principles of [Infrastructure as Code](https://en.wikipedia.org/wiki/Infrastructure_as_Code) and [Immutable Infrastructure](https://www.oreilly.com/ideas/an-introduction-to-immutable-infrastructure), Terraform supports the writing of declarative descriptions of the desired state of infrastructure. When the descriptor is applied, Terraform uses GCP APIs to provision and update resources to match. Terraform compares the desired state with the current state so incremental changes can be made without deleting everyingt and starting over.  For instance, Terraform can build out GCP projects and compute instances, etc., even set up a Kubernetes Engine cluster and deploy applications to it. When requirements change, the descriptor can be updated and Terraform will adjust the cloud infrastructure accordingly.
+Following the principles of [Infrastructure as Code](https://en.wikipedia.org/wiki/Infrastructure_as_Code) and [Immutable Infrastructure](https://www.oreilly.com/ideas/an-introduction-to-immutable-infrastructure), Terraform supports the writing of declarative descriptions of the desired state of infrastructure. When the descriptor is applied, Terraform uses GCP APIs to provision and update resources to match. Terraform compares the desired state with the current state so incremental changes can be made without deleting everything and starting over.  For instance, Terraform can build out GCP projects and compute instances, etc., even set up a Kubernetes Engine cluster and deploy applications to it. When requirements change, the descriptor can be updated and Terraform will adjust the cloud infrastructure accordingly.
 
 This example will start up a Kubernetes Engine cluster and deploy a simple sample application to it. By default, Kubernetes Engine clusters in GCP are provisioned with a pre-configured [Fluentd](https://www.fluentd.org/)-based collector that forwards logs to Stackdriver.
 
 ### Running Terraform
 
 #### One-time configuration
-The terraform configuration takes two parameters to determine where the Kubernetes Engine cluster should be created:
+The Terraform configuration takes two parameters to determine where the Kubernetes Engine cluster should be created:
 
 * project
 * zone
 
-For simplicity, these parameters should be specified in a file named terraform.tfvars, in the terraform directory. To generate this file based on your glcoud defaults, run:
+For simplicity, these parameters can be specified in a file named `terraform.tfvars`, in the `terraform` directory. To generate this file based on your gcloud defaults, run:
 
-./generate-tfvars.sh
-This will generate a terraform/terraform.tfvars file with the following keys. The values themselves will match the output of gcloud config list:
+```console
+$ ./terraform/generate-tfvars.sh
 ```
-# Contents of terraform.tfvars
+
+This will generate a `terraform/terraform.tfvars` file with `project` and `zone` values set. The values will match the output of `gcloud config list`:
+
+```
 project="YOUR_PROJECT"
 zone="YOUR_ZONE"
 ```
@@ -99,11 +104,17 @@ If you need to override any of the defaults, simply replace the desired value(s)
 
 #### Deploying the cluster
 
-There are three Terraform files provided with this example. The first one, `main.tf`, is the starting point for Terraform. It describes the features that will be used, the resources that will be manipulated, and the outputs that will result. The second file is `provider.tf`, which indicates which cloud provider and version will be the target of the Terraform commands--in this case GCP. The final file is `variables.tf`, which contains a list of variables that are used as inputs into Terraform. Any variables referenced in the `main.tf` that do not have defaults configured in `variables.tf` will result in prompts to the user at runtime.
+There are three Terraform files provided with this example in the `terraform` directory. The first one, `main.tf`, is the starting point for Terraform. It describes the features that will be used, the resources that will be manipulated, and the outputs that will result. The second file is `provider.tf`, which indicates which cloud provider and version will be the target of the Terraform commands--in this case GCP. The final file is `variables.tf`, which contains a list of variables that are used as inputs into Terraform. Any variables referenced in the `main.tf` that do not have defaults configured in `variables.tf` will result in prompts to the user at runtime.
+
+You will need to run Terraform commands from the `terraform` directory. Enter:
+
+```console
+$ cd terraform
+```
 
 Given that authentication was [configured](#configure-authentication) above, we are now ready to run Terraform. In order to establish the beginning state of your cloud infrastructure you must first initialize Terraform:
 
-```
+```console
 $ terraform init
 ```
 
@@ -111,17 +122,17 @@ This will create a hidden directory called `.terraform` in your current working 
 
 It is a good practice to do a dry run of Terraform prior to running it:
 
-```
+```console
 $ terraform plan
 ```
 
-Plan will prompt for any variables that do not have defaults and will output all the changes that Terraform will perform when applied. If everything looks good then it is time to put Terraform to work assembling your cloud infrastructure:
+`plan` will prompt for any variables that do not have defaults and will output all the changes that Terraform will perform when applied. If everything looks good then it is time to put Terraform to work assembling your cloud infrastructure:
 
-```
+```console
 $ terraform apply
 ```
 
-You will need to enter any variables again that don't have defaults provided. If no errors are displayed then after a few minutes you should see your Kubernetes Engine cluster in the [GCP Console](https://console.cloud.google.com/kubernetes) with the sample application deployed.
+You will need to enter any variables that don't have defaults provided in `terraform.tfvars`. If no errors are displayed then after a few minutes you should see your Kubernetes Engine cluster in the [GCP Console](https://console.cloud.google.com/kubernetes).
 
 ## Validation
 

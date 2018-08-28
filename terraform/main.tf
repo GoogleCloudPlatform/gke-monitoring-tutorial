@@ -48,11 +48,12 @@ resource "google_container_cluster" "primary" {
     command = "gcloud container clusters get-credentials ${google_container_cluster.primary.name} --zone ${google_container_cluster.primary.zone} --project ${var.project}"
   }
 
-  provisioner "local-exec" {
-    command = "kubectl run hello-server4 --image gcr.io/google-samples/hello-app:1.0 --port 8080"
-  }
+}
 
-  provisioner "local-exec" {
-    command = "kubectl expose deployment hello-server4 --type \"LoadBalancer\" "
-  }
+output "cluster_name" {
+  value = "${google_container_cluster.primary.name}"
+}
+
+output "primary_zone" {
+  value = "${google_container_cluster.primary.zone}"
 }

@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#! /usr/bin/env bash
 
 # Copyright 2018 Google LLC
 #
@@ -17,40 +17,20 @@
 # "---------------------------------------------------------"
 # "-                                                       -"
 # "-  Helper script to generate terraform variables        -"
-# "-  file based on glcoud defaults.                       -"
+# "-  file based on gcloud defaults.                       -"
 # "-                                                       -"
 # "---------------------------------------------------------"
 
-# This script will write the terraform.tfvars file into the current working directory.
-# The purpose is to populate defaults for subsequent terraform commands.
+# Stop immediately if something goes wrong
+set -euo pipefail
 
-# git is required for this tutorial
-command -v git >/dev/null 2>&1 || { \
- echo >&2 "I require git but it's not installed.  Aborting."; exit 1; }
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
-# glcoud is required for this tutorial
-command -v gcloud >/dev/null 2>&1 || { \
- echo >&2 "I require gcloud but it's not installed.  Aborting."; exit 1; }
+# shellcheck source=scripts/common.sh
+source "$ROOT/scripts/common.sh"
 
-
-REGION=$(gcloud config get-value compute/region)
-if [[ -z "${REGION}" ]]; then
-    echo "https://cloud.google.com/compute/docs/regions-zones/changing-default-zone-region" 1>&2
-    echo "gcloud cli must be configured with a default region." 1>&2
-    echo "run 'gcloud config set compute/region REGION'." 1>&2
-    echo "replace 'REGION' with the region name like us-west1." 1>&2
-    exit 1;
-fi
-
-ZONE=$(gcloud config get-value compute/zone)
-if [[ -z "${ZONE}" ]]; then
-    echo "https://cloud.google.com/compute/docs/regions-zones/changing-default-zone-region" 1>&2
-    echo "gcloud cli must be configured with a default zone." 1>&2
-    echo "run 'gcloud config set compute/zone ZONE'." 1>&2
-    echo "replace 'ZONE' with the zone name like us-west1-a." 1>&2
-    exit 1;
-fi
-
+# gcloud config holds values related to your environment. If you already
+# defined a default project we will retrieve it and use it
 PROJECT=$(gcloud config get-value core/project)
 if [[ -z "${PROJECT}" ]]; then
     echo "gcloud cli must be configured with a default project." 1>&2
@@ -59,17 +39,19 @@ if [[ -z "${PROJECT}" ]]; then
     exit 1;
 fi
 
-TFVARS_FILE="./terraform.tfvars"
+TFVARS_FILE="$ROOT/terraform/terraform.tfvars"
 
+# We don't want to overwrite a pre-existing tfvars file
 if [[ -f "${TFVARS_FILE}" ]]
 then
     echo "${TFVARS_FILE} already exists." 1>&2
     echo "Please remove or rename before regenerating." 1>&2
     exit 1;
 else
+# Write out all the values we gathered into a tfvars file so you don't
+# have to enter the values manually
     cat <<EOF > "${TFVARS_FILE}"
 project="${PROJECT}"
 zone="${ZONE}"
 EOF
 fi
-

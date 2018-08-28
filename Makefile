@@ -15,8 +15,23 @@
 # Make will use bash instead of sh
 SHELL := /usr/bin/env bash
 
-# All is the first target in the file so it will get picked up when you just run 'make' on its own
-all: check_shell check_python check_golang check_terraform check_docker check_base_files check_headers check_trailing_whitespace
+# lint is the first target in the file so it will get picked up when you just
+#   run 'make' on its own
+lint: check_shell check_shebangs check_python check_golang check_terraform \
+	check_docker check_base_files check_headers check_trailing_whitespace
+
+# create/delete/validate is for CICD
+.PHONY: create
+create:
+	@source scripts/create.sh
+
+.PHONY: validate
+validate:
+	@source scripts/validate.sh
+
+.PHONY: teardown
+teardown:
+	@source scripts/teardown.sh
 
 # The .PHONY directive tells make that this isn't a real target and so
 # the presence of a file named 'check_shell' won't cause this target to stop
@@ -57,4 +72,3 @@ check_trailing_whitespace:
 check_headers:
 	@echo "Checking file headers"
 	@python test/verify_boilerplate.py
-
