@@ -5,6 +5,7 @@
 * [Architecture](#architecture)
 * [Prerequisites](#prerequisites)
   * [Install Cloud SDK](#install-cloud-sdk)
+  * [Install Kubectl](#install-kubectl)
   * [Install Terraform](#install-terraform)
   * [Configure Authentication](#configure-authentication)
   * [Enable GCP APIs](#enable-gcp-apis)
@@ -44,6 +45,15 @@ You'll need access to a Google Cloud Project with billing enabled. See **Creatin
 ### Install Cloud SDK
 
 The Google Cloud SDK is used to interact with your GCP resources. [Installation instructions](https://cloud.google.com/sdk/downloads) for multiple platforms are available online.
+
+### Install Kubectl
+
+Once you have the Google Cloud SDK installed we can use it to install Kubectl.
+This is accomplished by executing the following command:
+
+```console
+$ gcloud components install kubectl
+```
 
 ### Install Terraform
 
@@ -90,7 +100,7 @@ The Terraform configuration takes two parameters to determine where the Kubernet
 For simplicity, these parameters can be specified in a file named `terraform.tfvars`, in the `terraform` directory. To generate this file based on your gcloud defaults, run:
 
 ```console
-$ ./terraform/generate-tfvars.sh
+$ ./scripts/generate-tfvars.sh
 ```
 
 This will generate a `terraform/terraform.tfvars` file with `project` and `zone` values set. The values will match the output of `gcloud config list`:
