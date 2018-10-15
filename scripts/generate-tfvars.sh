@@ -39,19 +39,25 @@ if [[ -z "${PROJECT}" ]]; then
     exit 1;
 fi
 
+# Get the default zone and use it or die
+ZONE=$(gcloud config get-value compute/zone)
+if [ -z "${ZONE}" ]; then
+    echo "gcloud cli must be configured with a default zone." 1>&2
+    echo "run 'gcloud config set compute/zone ZONE'." 1>&2
+    echo "replace 'ZONE' with the zone name like us-west1-a." 1>&2
+    exit 1;
+fi
+
 TFVARS_FILE="$ROOT/terraform/terraform.tfvars"
 
-# We don't want to overwrite a pre-existing tfvars file
 if [[ -f "${TFVARS_FILE}" ]]
 then
-    echo "${TFVARS_FILE} already exists." 1>&2
-    echo "Please remove or rename before regenerating." 1>&2
-    exit 1;
-else
+    rm "${TFVARS_FILE}"
+fi
 # Write out all the values we gathered into a tfvars file so you don't
 # have to enter the values manually
     cat <<EOF > "${TFVARS_FILE}"
 project="${PROJECT}"
 zone="${ZONE}"
 EOF
-fi
+

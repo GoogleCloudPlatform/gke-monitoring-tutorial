@@ -79,7 +79,7 @@ EXT_PORT=$(kubectl get service "$APP_NAME" -n default \
 echo "App is available at: http://$EXT_IP:$EXT_PORT"
 
 # Test service availability
-[ "$(curl -s -o /dev/null -w '%{http_code}' "$EXT_IP:$EXT_PORT"/)" \
+[ "$(curl -s -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 5 "$EXT_IP:$EXT_PORT"/)" \
   -eq 200 ] || exit 1
 
 echo "Step 2 of the validation passed. App handles requests."

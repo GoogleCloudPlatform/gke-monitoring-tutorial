@@ -67,20 +67,6 @@ The Terraform configuration will execute against your GCP environment and create
 $ gcloud auth application-default login
 ```
 
-### Enable GCP APIs
-
-In order for the deployment automation to work, the following APIs need to be enabled:
-* Kubernetes Engine API
-* Stackdriver Logging API
-* Stackdriver Monitoring API
-
-You can enable them using the following command:
-
-```console
-$ gcloud services enable container.googleapis.com \
-   logging.googleapis.com monitoring.googleapis.com
-```
-
 ## Deployment
 
 ### How does it work?
@@ -164,18 +150,9 @@ The following steps are used to setup a Stackdriver Monitoring account.
 11. Click the **Continue** button.
 12. The actual creation of the account and underlying resources takes a few minutes.  Once completed you can press the **Launch monitoring** button.
 
-### Using Metrics Explorer
+### Using Stackdriver Kubernetes
 
-Metrics Explorer is a simple way for viewing metrics quickly.  The following steps are detail out how to use the Metrics Explorer:
-
-1. Click on the menu **Resources -> Metrics Explorer** to bring up the **Metrics Explorer** screen.
-2. In the **Find resource type and metric** option type **GKE Container**.
-3. This will give you a listing of all metrics related to **GKE Container**.  Select the **Memory usage** metric.
-4. This will graph the **GKE Container -> Memory usage** on the right hand of the page.  The screen should look similar to the following, but likely won't show as much timeseries history if the cluster and Stackdriver account was recently created:
-
-![Metrics Explorer](docs/metricsexplorer.png)
-
-You can further update the screen by adding additional metrics, or further customizing the metric you already added (by including specific filtering, grouping, aggregation, etc.).
+Stackdriver Kubernetes is a new feature that more tightly integrates Stackdriver with key Kubernetes metrics. From the Stackdriver Monitoring home page click on `Resources` then `Kubernetes` to view the metrics.
 
 ### Setting up a Custom Alert
 
