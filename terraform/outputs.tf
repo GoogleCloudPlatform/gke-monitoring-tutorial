@@ -14,17 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/*
-Required Variables
-These must be provided at runtime.
-*/
-
-variable "zone" {
-  description = "The zone in which to create the Kubernetes cluster. Must match the region"
-  type        = "string"
+output "cluster_name" {
+  value = "${google_container_cluster.primary.name}"
 }
 
-variable "project" {
-  description = "The name of the project in which to create the Kubernetes cluster."
-  type        = "string"
+output "primary_zone" {
+  value = "${google_container_cluster.primary.zone}"
 }

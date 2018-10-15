@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 provider "google" {
   project = "${var.project}"
-  version = "~> 1.13"
+  version = "~> 1.19"
 }

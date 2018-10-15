@@ -29,11 +29,7 @@ source "$ROOT/scripts/common.sh"
 
 # Generate the variables to be used by Terraform
 # shellcheck source=scripts/generate-tfvars.sh
-source "$ROOT/scripts/generate-tfvars.sh"
-
-# Enable required GCP APIs
-gcloud services enable container.googleapis.com logging.googleapis.com \
-  monitoring.googleapis.com
+"$ROOT/scripts/generate-tfvars.sh"
 
 # Initialize and run Terraform
 (cd "$ROOT/terraform"; terraform init -input=false)

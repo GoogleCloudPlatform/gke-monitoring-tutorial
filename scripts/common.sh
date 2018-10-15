@@ -26,31 +26,3 @@ command -v gcloud >/dev/null 2>&1 || { \
 
 command -v kubectl >/dev/null 2>&1 || { \
  echo >&2 "I require kubectl but it's not installed.  Aborting."; exit 1; }
-
-# Get the default zone and use it or die
-ZONE=$(gcloud config get-value compute/zone)
-if [ -z "${ZONE}" ]; then
-    echo "gcloud cli must be configured with a default zone." 1>&2
-    echo "run 'gcloud config set compute/zone ZONE'." 1>&2
-    echo "replace 'ZONE' with the zone name like us-west1-a." 1>&2
-    exit 1;
-fi
-
-#Get the default region and use it or die
-REGION=$(gcloud config get-value compute/region)
-if [ -z "${REGION}" ]; then
-    echo "gcloud cli must be configured with a default region." 1>&2
-    echo "run 'gcloud config set compute/region REGION'." 1>&2
-    echo "replace 'REGION' with the region name like us-west1." 1>&2
-    exit 1;
-fi
-
-# Get a comma separated list of zones from the default region
-ZONESINREGION=""
-for FILTEREDZONE in $(gcloud compute zones list --filter="region:$REGION" \
-  --format="value(name)" --limit 2)
-do
-  ZONESINREGION+="$FILTEREDZONE,"
-done
-#Remove the last comma from the starting
-ZONESINREGION=${ZONESINREGION%?}
