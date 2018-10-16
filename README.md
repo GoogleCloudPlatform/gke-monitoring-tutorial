@@ -4,29 +4,31 @@
 * [Introduction](#introduction)
 * [Architecture](#architecture)
 * [Prerequisites](#prerequisites)
+  * [Cloud Project](#cloud-project)
   * [Install Cloud SDK](#install-cloud-sdk)
   * [Install Kubectl](#install-kubectl)
   * [Install Terraform](#install-terraform)
   * [Configure Authentication](#configure-authentication)
-  * [Enable GCP APIs](#enable-gcp-apis)
 * [Deployment](#deployment)
   * [How does it work?](#how-does-it-work)
   * [Running Terraform](#running-terraform)
+    * [One\-time configuration](#one-time-configuration)
+    * [Deploying the cluster](#deploying-the-cluster)
 * [Validation](#validation)
   * [Create a new Stackdriver Account](#create-a-new-stackdriver-account)
-  * [Using Metrics Explorer](#using-metrics-explorer)
-  * [Setting up a Custom Alert](#setting-up-a-custom-alert)
-  * [Creating an Uptime Check](#creating-an-uptime-check)
+  * [Using Stackdriver Kubernetes Monitoring](#using-stackdriver-kubernetes-monitoring)
+    * [Native Prometheus integration](#native-prometheus-integration)
 * [Teardown](#teardown)
 * [Troubleshooting](#troubleshooting)
 * [Relevant Material](#relevant-material)
 
+
 ## Introduction
-Stackdriver Monitoring is used to visualize the performance, uptime, and overall health of your applications.  The Stackdriver Monitoring console allows you to visualize data across all projects in GCP in a single interface.
+[Stackdriver Kubernetes Monitoring](https://cloud.google.com/monitoring/kubernetes-engine/) is a new Stackdriver feature that more tightly integrates with GKE to better show you key stats about your cluster and the workloads and services running in it. Included in the new feature is functionality to import, as native Stackdriver metrics, metrics from pods with Prometheus endpoints. This allows you to use Stackdriver native alerting functionality with your Prometheus metrics without any additional workload.
 
 This tutorial will walk you through setting up Monitoring and visualizing metrics from a Kubernetes Engine cluster.  It makes use of [Terraform](https://www.terraform.io/), a declarative [Infrastructure as Code](https://en.wikipedia.org/wiki/Infrastructure_as_Code) tool that enables configuration files to be used to automate the deployment and evolution of infrastructure in the cloud.  The logs from the Kubernetes Engine cluster will be leveraged to walk through the monitoring capabilities of Stackdriver.
 
-**Note:** The setup of Stackdriver Monitoring is not automated with a script because it is currently not supported through Terraform or via the gcloud command line tool.
+**Note:** The setup of the Stackdriver Monitoring workspace is not automated with a script because it is currently not supported through Terraform or via the gcloud command line tool.
 
 ## Architecture
 
@@ -40,7 +42,7 @@ The steps described in this document require the installation of several tools a
 
 ### Cloud Project
 
-You'll need access to a Google Cloud Project with billing enabled. See **Creating and Managing Projects** (https://cloud.google.com/resource-manager/docs/creating-managing-projects) for creating a new project. To make cleanup easier it's recommended to create a new project.
+You'll need access to a Google Cloud Project with billing enabled. See [Creating and Managing Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) for creating a new project. To make cleanup easier it's recommended to create a new project.
 
 ### Install Cloud SDK
 
@@ -150,74 +152,19 @@ The following steps are used to setup a Stackdriver Monitoring account.
 11. Click the **Continue** button.
 12. The actual creation of the account and underlying resources takes a few minutes.  Once completed you can press the **Launch monitoring** button.
 
-### Using Stackdriver Kubernetes
+### Using Stackdriver Kubernetes Monitoring
 
-Stackdriver Kubernetes is a new feature that more tightly integrates Stackdriver with key Kubernetes metrics. From the Stackdriver Monitoring home page click on `Resources` then `Kubernetes` to view the metrics.
+For a thorough guide on how to observe your cluster with the new Stackdriver Kubernetes UI, see [https://cloud.google.com/monitoring/kubernetes-engine/observing](Observing your Kubernetes Clusters).
 
-### Setting up a Custom Alert
+#### Native Prometheus integration
 
-The **Alerting** capability in Stackdriver Monitoring allows you to define alert policies which contain conditions such as looking for a metric exceeding a threshold that trigger notifications to a channel such as email, sms message and hipchat.  Alerts that trigger will create an incident which are recorded and tracked for historical reporting. Once the conditions of the alert are no longer satisfied, the incident is automatically closed.
+The Terraform code included a Stackdriver alerting policy that is watching a metric that was originally imported from a Prometheus endpoint.
+From the Stackdriver main page, click on `Alerting` then `Policies Overview` to show all the polcies, including the alerting policy called `Prometheus mem alloc`. Clicking on the policy will provide much more detail.
 
-The following steps describe how to create the an alert for a threshold condition.
-
-1. In the console click on the **Alerting -> Create a policy** option.
-2. Click on the **Add condition** button.
-3. The **Selection condition type** page is displayed.  This page allows you to select various condition types that you want to measure.
-4. Click on the **Select** button in the **Metric Threshold** section.
-5. On the **Add Metric Threshold Condition** page we can specify the specific metric we want to monitor.  On this page enter the following criteria:
-* Resource Type - GKE Container
-* Applies To - Group
-* If Metric - CPU Utilization
-* Condition - above
-* Threshold - 70%
-* For - 1 Minute
-6. Click on the **Save** button.
-7. In the **Notifications** section leave the type as Email, and enter in an email account that you can access.
-8. In the **Documentation** section enter a custom message.
-9. In the **Name this policy** section enter a name for the alert (i.e. GKE CPU Utilization Alert).
-10. Click on the **Save Policy** button.
-
-### Creating an Uptime Check
-
-Stackdriver Uptime Checks can be configured to verify that your services or applications are up and accessible.  The checks can be performed from various locations around the world, and the results can be used to enable alerting policies, as well as direct monitoring from the uptime-check dashboard.  This section will discuss the process for creating an uptime-check for the application hosted inside the Kubernetes Engine container.  **Note:** With each Stackdriver account you can have up to 100 uptime-checks.
-
-The following steps should be followed to create an uptime-check.
-
-To begin with we need to have an application or URL to monitor.  The Kubernetes Engine container contains a simple application that can be used for this.  Follow the steps to get the IP address to use to setup this test.
-
-1. In the GCP console navigate to the **Networking -> Network services** page.
-2. On the default **Load balancing** page that shows up, click on the TCP load balancer that was setup.
-3. On the **Load balancer details** page there is a top section labeled **Frontend**.  Note the IP:Port value as this will be used in the upcoming steps.
-
-Using the IP:Port value you can now access the application.  Go to a browser and enter the URL.  The browser should return a screen that looks similar to the following:
-
-![Sample application screen](docs/application-screen.png)
-
-The following steps describe how to create the uptime-check.
-
-1. Navigate to the Stackdriver Monitoring console in your browser.
-2. In the console click on the **Uptime Checks -> Uptime Check Overview** option.
-3. This brings you to the main **Uptime Checks** page.  Click on the **Create an Uptime Check** button.
-4. This will bring up the **New Uptime Check** page.  The screen will look like the following:
-
-![New Uptime Check](docs/newuptimecheck.png)
-
-On this page enter the following parameters:
-  * Title - Uptime Test Check
-  * Check Type - HTTP (Should be the default)
-  * Resource Type - URL (Should be the default)
-  * Hostname - Enter just the IP address that was obtained above
-  * Path - Leave this blank
-  * Check every - 1 minute
-  * Click on **Advanced Options**
-  * Port - 8080
-5. Click on the **Test** button to verify that all the information you entered was correct.  If it doesn't give you a 200 return code go back and check the values entered above.
-6. Click on the **Save** button to save your entry.
-7. From the **Uptime Checks** page you can review and monitor the results of your check.
 
 ## Teardown
 
-When you are finished with this example, and you are ready toclean up the resources that were created so that you avoid accruing charges, you can run the following Terraform command to remove all resources :
+When you are finished with this example, and you are ready to clean up the resources that were created so that you avoid accruing charges, you can run the following Terraform command to remove all resources :
 
 ```
 $ terraform destroy
@@ -238,9 +185,7 @@ using `gcloud auth application-default login`.
 After the scripts execute it may take a few minutes for the Metrics or Uptime Checks to appear.  Configure the items and give the system some time to generate metrics and checks as they someimes take time to complete.
 
 ## Relevant Material
-* [Kubernetes Engine Monitoring](https://cloud.google.com/kubernetes-engine/docs/how-to/monitoring)
 * [Stackdriver Kubernetes Monitoring](https://cloud.google.com/monitoring/kubernetes-engine/)
-* [Managing Uptime Checks](https://cloud.google.com/monitoring/uptime-checks/management)
 * [Terraform Google Cloud Provider](https://www.terraform.io/docs/providers/google/index.html)
 
 
