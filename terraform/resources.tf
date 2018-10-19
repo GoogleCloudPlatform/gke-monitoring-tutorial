@@ -61,6 +61,10 @@ resource "google_container_cluster" "primary" {
   provisioner "local-exec" {
     command = "gcloud container clusters get-credentials ${google_container_cluster.primary.name} --zone ${google_container_cluster.primary.zone} --project ${var.project}"
   }
+
+  provisioner "local-exec" {
+    command = "sleep 120"
+  }
 }
 
 resource "google_monitoring_alert_policy" "prometheus_mem_alloc" {
