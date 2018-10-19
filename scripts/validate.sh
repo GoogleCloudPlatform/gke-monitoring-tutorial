@@ -56,30 +56,4 @@ then
   exit 1
 fi
 
-echo "Step 1 of the validation passed. App is deployed."
-
-# Loop for up to 60 seconds waiting for service's IP address
-EXT_IP=""
-for _ in {1..30}; do
-  EXT_IP=$(kubectl get svc "$APP_NAME" -n default \
-    -ojsonpath='{.status.loadBalancer.ingress[0].ip}')
-  [ ! -z "$EXT_IP" ] && break
-  sleep 2
-done
-if [ -z "$EXT_IP" ]
-then
-  echo "ERROR - Timed out waiting for IP"
-  exit 1
-fi
-
-# Get service's port
-EXT_PORT=$(kubectl get service "$APP_NAME" -n default \
-  -o=jsonpath='{.spec.ports[0].port}')
-
-echo "App is available at: http://$EXT_IP:$EXT_PORT"
-
-# Test service availability
-[ "$(curl -s -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 5 "$EXT_IP:$EXT_PORT"/)" \
-  -eq 200 ] || exit 1
-
-echo "Step 2 of the validation passed. App handles requests."
+echo "App is deployed."
