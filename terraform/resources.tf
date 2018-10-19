@@ -63,6 +63,14 @@ resource "google_container_cluster" "primary" {
   }
 
   provisioner "local-exec" {
+    command = "kubectl apply -f ../manifests/rbac-setup.yaml --as=admin --as-group=system:masters"
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl apply -f ../manifests/prometheus-service-sed.yaml"
+  }
+
+  provisioner "local-exec" {
     command = "sleep 120"
   }
 }

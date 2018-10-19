@@ -31,19 +31,15 @@ source "$ROOT/scripts/common.sh"
 # shellcheck source=scripts/generate-tfvars.sh
 "$ROOT/scripts/generate-tfvars.sh"
 
-# Initialize and run Terraform
-(cd "$ROOT/terraform"; terraform init -input=false)
-(cd "$ROOT/terraform"; terraform apply -input=false -auto-approve)
-
-kubectl apply -f "$ROOT/manifests/rbac-setup.yaml" --as=admin --as-group=system:masters
-
 # sed the prometheus file for the project specific stuff
 PROJECT=$(gcloud config get-value core/project)
-CLUSTER_NAME=$(cd "$ROOT/terraform"; terraform output cluster_name)
+CLUSTER_NAME="stackdriver-monitoring-tutorial"
 ZONE=$(gcloud config get-value compute/zone)
 sed -e "s/\\[PROJECT_ID\\]/$PROJECT/" \
 -e "s/\\[CLUSTER_NAME\\]/$CLUSTER_NAME/" \
 -e "s/\\[CLUSTER_ZONE\\]/$ZONE/" "$ROOT/manifests/prometheus-service.yaml" \
 > "$ROOT/manifests/prometheus-service-sed.yaml"
 
-kubectl apply -f "$ROOT/manifests/prometheus-service-sed.yaml"
+# Initialize and run Terraform
+(cd "$ROOT/terraform"; terraform init -input=false)
+(cd "$ROOT/terraform"; terraform apply -input=false -auto-approve)
