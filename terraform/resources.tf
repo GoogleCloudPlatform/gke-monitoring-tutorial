@@ -76,7 +76,7 @@ resource "google_monitoring_alert_policy" "prometheus_mem_alloc" {
       threshold_value = 12
     }
     }]
-
+  depends_on = ["google_container_cluster.primary"]
 }
 
 resource "google_project_service" "monitoring" {
