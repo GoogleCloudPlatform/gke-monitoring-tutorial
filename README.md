@@ -124,7 +124,11 @@ It is a good practice to do a dry run of Terraform prior to running it:
 $ terraform plan
 ```
 
-`plan` will prompt for any variables that do not have defaults and will output all the changes that Terraform will perform when applied. If everything looks good then it is time to put Terraform to work assembling your cloud infrastructure:
+`plan` will prompt for any variables that do not have defaults and will output all the changes that Terraform will perform when applied. 
+
+*Note*: If this is a new project, you'll likely need to enable the [Cloud Resource Manager API](https://console.cloud.google.com/apis/api/cloudresourcemanager.googleapis.com/overview). Otherwise, running Terraform will result in an error.
+
+If everything looks good then it is time to put Terraform to work assembling your cloud infrastructure:
 
 ```console
 $ terraform apply
