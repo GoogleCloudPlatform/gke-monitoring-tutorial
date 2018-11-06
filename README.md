@@ -159,7 +159,7 @@ For a thorough guide on how to observe your cluster with the new Stackdriver Kub
 #### Native Prometheus integration
 
 The Terraform code included a Stackdriver alerting policy that is watching a metric that was originally imported from a Prometheus endpoint.
-From the Stackdriver main page, click on `Alerting` then `Policies Overview` to show all the polcies, including the alerting policy called `Prometheus mem alloc`. Clicking on the policy will provide much more detail.
+From the Stackdriver main page, click on `Alerting` then `Policies Overview` to show all the policies, including the alerting policy called `Prometheus mem alloc`. Clicking on the policy will provide much more detail.
 
 
 ## Teardown
