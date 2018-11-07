@@ -61,3 +61,9 @@ project="${PROJECT}"
 zone="${ZONE}"
 EOF
 
+# Generate the prometheus yaml that `terraform apply` requires
+CLUSTER_NAME="stackdriver-monitoring-tutorial"
+sed -e "s/\\[PROJECT_ID\\]/$PROJECT/" \
+    -e "s/\\[CLUSTER_NAME\\]/$CLUSTER_NAME/" \
+    -e "s/\\[CLUSTER_ZONE\\]/$ZONE/" "$ROOT/manifests/prometheus-service.yaml" \
+    > "$ROOT/manifests/prometheus-service-sed.yaml"
