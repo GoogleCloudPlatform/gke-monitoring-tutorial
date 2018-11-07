@@ -59,6 +59,10 @@ resource "google_container_cluster" "primary" {
   }
 
   provisioner "local-exec" {
+    command = "gcloud services enable compute.googleapis.com container.googleapis.com cloudbuild.googleapis.com cloudresourcemanager.googleapis.com"
+  }
+
+  provisioner "local-exec" {
     command = "gcloud container clusters get-credentials ${google_container_cluster.primary.name} --zone ${google_container_cluster.primary.zone} --project ${var.project}"
   }
 
