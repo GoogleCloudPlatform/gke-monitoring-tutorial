@@ -154,7 +154,7 @@ The following steps are used to setup a Stackdriver Monitoring account.
 
 ### Using Stackdriver Kubernetes Monitoring
 
-For a thorough guide on how to observe your cluster with the new Stackdriver Kubernetes UI, see [https://cloud.google.com/monitoring/kubernetes-engine/observing](Observing your Kubernetes Clusters).
+For a thorough guide on how to observe your cluster with the new Stackdriver Kubernetes UI, see [Observing Your Kubernetes Clusters](https://cloud.google.com/monitoring/kubernetes-engine/observing).
 
 #### Native Prometheus integration
 
