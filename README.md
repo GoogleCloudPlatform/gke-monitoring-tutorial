@@ -10,10 +10,8 @@
   * [Install Terraform](#install-terraform)
   * [Configure Authentication](#configure-authentication)
 * [Deployment](#deployment)
-  * [How does it work?](#how-does-it-work)
-  * [Running Terraform](#running-terraform)
-    * [One\-time configuration](#one-time-configuration)
-    * [Deploying the cluster](#deploying-the-cluster)
+  * [Deploying the cluster](#deploying-the-cluster)
+  * [How does Terraform work?](#how-does-terraform-work)
 * [Validation](#validation)
   * [Create a new Stackdriver Account](#create-a-new-stackdriver-account)
   * [Using Stackdriver Kubernetes Monitoring](#using-stackdriver-kubernetes-monitoring)
@@ -32,7 +30,7 @@ This tutorial will walk you through setting up Monitoring and visualizing metric
 
 ## Architecture
 
-The tutorial will create a Kubernetes Engine cluster that has a sample application deployed to it.  The logging and metrics for the cluster are loaded into Stackdriver Logging by default.  In the turorial a Stackdriver Monitoring account will be setup to view the metrics captured.
+The tutorial will create a Kubernetes Engine cluster that has a sample application deployed to it.  The logging and metrics for the cluster are loaded into Stackdriver Logging by default.  In the tutorial a Stackdriver Monitoring account will be setup to view the metrics captured.
 
 ![Monitoring Architecture](docs/architecture.png)
 
@@ -71,66 +69,29 @@ $ gcloud auth application-default login
 
 ## Deployment
 
-### How does it work?
+### Deploying the cluster
+
+The infrastructure and Stackdriver alert policy required by this project can be deployed by executing:
+```console
+make create
+```
+
+This will:
+1. Read your project & zone configuration to generate a couple config files:
+  * `./terraform/terraform.tfvars` for Terraform variables
+  * `./manifests/prometheus-service-sed.yaml` for the Prometeus policy to be created in Stackdriver
+2. Run `terraform init` to prepare Terraform to create the infrastructure
+3. Run `terraform apply` to actually create the infrastructure & Stackdriver alert policy
+
+If you need to override any of the defaults in the Terraform variables file, simply replace the desired value(s) to the right of the equals sign(s). Be sure your replacement values are still double-quoted.
+
+If no errors are displayed then after a few minutes you should see your Kubernetes Engine cluster in the [GCP Console](https://console.cloud.google.com/kubernetes).
+
+### How does Terraform work?
 
 Following the principles of [Infrastructure as Code](https://en.wikipedia.org/wiki/Infrastructure_as_Code) and [Immutable Infrastructure](https://www.oreilly.com/ideas/an-introduction-to-immutable-infrastructure), Terraform supports the writing of declarative descriptions of the desired state of infrastructure. When the descriptor is applied, Terraform uses GCP APIs to provision and update resources to match. Terraform compares the desired state with the current state so incremental changes can be made without deleting everything and starting over.  For instance, Terraform can build out GCP projects and compute instances, etc., even set up a Kubernetes Engine cluster and deploy applications to it. When requirements change, the descriptor can be updated and Terraform will adjust the cloud infrastructure accordingly.
 
 This example will start up a Kubernetes Engine cluster and deploy a simple sample application to it. By default, Kubernetes Engine clusters in GCP are provisioned with a pre-configured [Fluentd](https://www.fluentd.org/)-based collector that forwards logs to Stackdriver.
-
-### Running Terraform
-
-#### One-time configuration
-The Terraform configuration takes two parameters to determine where the Kubernetes Engine cluster should be created:
-
-* project
-* zone
-
-For simplicity, these parameters can be specified in a file named `terraform.tfvars`, in the `terraform` directory. To generate this file based on your gcloud defaults, run:
-
-```console
-$ ./scripts/generate-tfvars.sh
-```
-
-This will generate a `terraform/terraform.tfvars` file with `project` and `zone` values set. The values will match the output of `gcloud config list`:
-
-```
-project="YOUR_PROJECT"
-zone="YOUR_ZONE"
-```
-
-If you need to override any of the defaults, simply replace the desired value(s) to the right of the equals sign(s). Be sure your replacement values are still double-quoted.
-
-#### Deploying the cluster
-
-There are three Terraform files provided with this example in the `terraform` directory. The first one, `main.tf`, is the starting point for Terraform. It describes the features that will be used, the resources that will be manipulated, and the outputs that will result. The second file is `provider.tf`, which indicates which cloud provider and version will be the target of the Terraform commands--in this case GCP. The final file is `variables.tf`, which contains a list of variables that are used as inputs into Terraform. Any variables referenced in the `main.tf` that do not have defaults configured in `variables.tf` will result in prompts to the user at runtime.
-
-You will need to run Terraform commands from the `terraform` directory. Enter:
-
-```console
-$ cd terraform
-```
-
-Given that authentication was [configured](#configure-authentication) above, we are now ready to run Terraform. In order to establish the beginning state of your cloud infrastructure you must first initialize Terraform:
-
-```console
-$ terraform init
-```
-
-This will create a hidden directory called `.terraform` in your current working directory and populate it with files used by Terraform.
-
-It is a good practice to do a dry run of Terraform prior to running it:
-
-```console
-$ terraform plan
-```
-
-`plan` will prompt for any variables that do not have defaults and will output all the changes that Terraform will perform when applied. If everything looks good then it is time to put Terraform to work assembling your cloud infrastructure:
-
-```console
-$ terraform apply
-```
-
-You will need to enter any variables that don't have defaults provided in `terraform.tfvars`. If no errors are displayed then after a few minutes you should see your Kubernetes Engine cluster in the [GCP Console](https://console.cloud.google.com/kubernetes).
 
 ## Validation
 
@@ -164,13 +125,13 @@ From the Stackdriver main page, click on `Alerting` then `Policies Overview` to 
 
 ## Teardown
 
-When you are finished with this example, and you are ready to clean up the resources that were created so that you avoid accruing charges, you can run the following Terraform command to remove all resources :
+When you are finished with this example, and you are ready to clean up the resources that were created so that you avoid accruing charges, you can run the following command to remove all resources :
 
 ```
-$ terraform destroy
+$ make teardown
 ```
 
-Terraform tracks the resources it creates so it is able to tear them all back down.
+This command uses the `terraform destroy` command to remove the infrastructure. Terraform tracks the resources it creates so it is able to tear them all back down.
 
 ## Troubleshooting
 
