@@ -30,7 +30,7 @@ This tutorial will walk you through setting up Monitoring and visualizing metric
 
 ## Architecture
 
-The tutorial will create a Kubernetes Engine cluster that has a sample application deployed to it.  The logging and metrics for the cluster are loaded into Stackdriver Logging by default.  In the turorial a Stackdriver Monitoring account will be setup to view the metrics captured.
+The tutorial will create a Kubernetes Engine cluster that has a sample application deployed to it.  The logging and metrics for the cluster are loaded into Stackdriver Logging by default.  In the tutorial a Stackdriver Monitoring account will be setup to view the metrics captured.
 
 ![Monitoring Architecture](docs/architecture.png)
 
