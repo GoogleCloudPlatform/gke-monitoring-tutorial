@@ -31,4 +31,8 @@ source "$ROOT/scripts/common.sh"
 
 # Tear down Terraform-managed resources and remove generated tfvars
 cd "$ROOT/terraform" || exit; terraform destroy -input=false -auto-approve
+rm -rf "$ROOT/terraform/.terraform"
+rm -f "$ROOT/terraform/terraform.tfstate"
+rm -f "$ROOT/terraform/terraform.tfstate.backup"
 rm -f "$ROOT/terraform/terraform.tfvars"
+rm -f "$ROOT/manifests/prometheus-service-sed.yaml"
