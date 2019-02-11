@@ -10,16 +10,15 @@
   * [Install Terraform](#install-terraform)
   * [Configure Authentication](#configure-authentication)
 * [Deployment](#deployment)
+  * [Create a new Stackdriver Account](#create-a-new-stackdriver-account)
   * [Deploying the cluster](#deploying-the-cluster)
   * [How does Terraform work?](#how-does-terraform-work)
 * [Validation](#validation)
-  * [Create a new Stackdriver Account](#create-a-new-stackdriver-account)
   * [Using Stackdriver Kubernetes Monitoring](#using-stackdriver-kubernetes-monitoring)
     * [Native Prometheus integration](#native-prometheus-integration)
 * [Teardown](#teardown)
 * [Troubleshooting](#troubleshooting)
 * [Relevant Material](#relevant-material)
-
 
 ## Introduction
 [Stackdriver Kubernetes Monitoring](https://cloud.google.com/monitoring/kubernetes-engine/) is a new Stackdriver feature that more tightly integrates with GKE to better show you key stats about your cluster and the workloads and services running in it. Included in the new feature is functionality to import, as native Stackdriver metrics, metrics from pods with Prometheus endpoints. This allows you to use Stackdriver native alerting functionality with your Prometheus metrics without any additional workload.
@@ -41,7 +40,6 @@ The tutorial will create a Kubernetes Engine cluster that has a sample applicati
 Click the button below to run the demo in a [Google Cloud Shell](https://cloud.google.com/shell/docs/)
 
 [![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https://github.com/GoogleCloudPlatform/gke-monitoring-tutorial.git&amp;cloudshell_image=gcr.io/graphite-cloud-shell-images/terraform:latest&amp;cloudshell_tutorial=README.md)
-
 
 All the tools for the demo are installed. When using Cloud Shell execute the following
 command in order to setup gcloud cli. When executing this command please setup your region
@@ -83,6 +81,24 @@ $ gcloud auth application-default login
 
 ## Deployment
 
+In this section we will create a Stackdriver Monitoring account so that we can explore the capabilities of the Monitoring console.
+
+### Create a new Stackdriver Account
+
+The following steps are used to setup a Stackdriver Monitoring account.
+1. Visit the **Monitoring** section of the GCP Console.  This will launch the process of creating a new Monitoring console if you have not created one before.
+2. On the **Create your free StackDriver account** page select the project you created earlier.  **Note:** You cannot change this setting once it is created.
+3. Click on the **Create Account** button.
+4. On the next page, **Add Google Cloud Platform projects to monitor** you can leave this alone since the project is already selected it isn't necessary to select any other projects.  **Note:** You can add and remove projects at a later date if necessary.
+5. Click the **Continue** button.
+6. On the **Monitor AWS accounts** page you can choose to specify your AWS account information or skip this step.
+7. For this tutorials purposes you can click the **Skip AWS Setup** button.
+8. On the **Install the Stackdriver Agents** page you are provided with a script that can be used to add the Stackdriver Monitoring and Logging agents on each of your VM instances.  **Note:** The tracking of VM's is not automatic like it is for Kubernetes Engine.  For the purposes of this tutorial this script is not needed.
+9. Click the **Continue** button.
+10. On the **Get Reports by Email** page you can simply select any of the options depending on whether you want to receive the reports.  For the purposes of this demo we will not be using the reports.
+11. Click the **Continue** button.
+12. The actual creation of the account and underlying resources takes a few minutes.  Once completed you can press the **Launch monitoring** button.
+
 ### Deploying the cluster
 
 The infrastructure and Stackdriver alert policy required by this project can be deployed by executing:
@@ -109,23 +125,13 @@ This example will start up a Kubernetes Engine cluster and deploy a simple sampl
 
 ## Validation
 
-In this section we will create a Stackdriver Monitoring account so that we can explore the capabilities of the Monitoring console.
+If no errors are displayed during deployment, after a few minutes you should see your Kubernetes Engine cluster in the GCP Console with the sample application deployed.
 
-### Create a new Stackdriver Account
+In order to validate that resources are installed and working correctly, run:
 
-The following steps are used to setup a Stackdriver Monitoring account.
-1. Visit the **Monitoring** section of the GCP Console.  This will launch the process of creating a new Monitoring console if you have not created one before.
-2. On the **Create your free StackDriver account** page select the project you created earlier.  **Note:** You cannot change this setting once it is created.
-3. Click on the **Create Account** button.
-4. On the next page, **Add Google Cloud Platform projects to monitor** you can leave this alone since the project is already selected it isn't necessary to select any other projects.  **Note:** You can add and remove projects at a later date if necessary.
-5. Click the **Continue** button.
-6. On the **Monitor AWS accounts** page you can choose to specify your AWS account information or skip this step.
-7. For this tutorials purposes you can click the **Skip AWS Setup** button.
-8. On the **Install the Stackdriver Agents** page you are provided with a script that can be used to add the Stackdriver Monitoring and Logging agents on each of your VM instances.  **Note:** The tracking of VM's is not automatic like it is for Kubernetes Engine.  For the purposes of this tutorial this script is not needed.
-9. Click the **Continue** button.
-10. On the **Get Reports by Email** page you can simply select any of the options depending on whether you want to receive the reports.  For the purposes of this demo we will not be using the reports.
-11. Click the **Continue** button.
-12. The actual creation of the account and underlying resources takes a few minutes.  Once completed you can press the **Launch monitoring** button.
+```console
+make validate
+```
 
 ### Using Stackdriver Kubernetes Monitoring
 
