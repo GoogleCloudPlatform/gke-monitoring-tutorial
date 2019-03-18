@@ -5,11 +5,11 @@
 * [Architecture](#architecture)
 * [Initial Setup](#initial-setup)
   * [Configure gcloud](#configure-gcloud)
-  * [Tools](#tools)
-    * [Install Cloud SDK](#install-cloud-sdk)
-    * [Install Kubectl](#install-kubectl-cli)
-    * [Install Terraform](#install-terraform)
-* [Configure Authentication](#configure-authentication)
+* [Tools](#tools)
+  * [Install Cloud SDK](#install-cloud-sdk)
+  * [Install Kubectl](#install-kubectl-cli)
+  * [Install Terraform](#install-terraform)
+  * [Configure Authentication](#configure-authentication)
 * [Deployment](#deployment)
   * [Create a new Stackdriver Account](#create-a-new-stackdriver-account)
   * [Deploying the cluster](#deploying-the-cluster)
@@ -38,7 +38,8 @@ The tutorial will create a Kubernetes Engine cluster that has a sample applicati
 
 ### Configure gcloud
 
-When using Cloud Shell execute the following command in order to setup gcloud cli. When executing this command please setup your region
+All the tools for the demo are installed. When using Cloud Shell execute the following
+command in order to setup gcloud cli. When executing this command please setup your region
 and zone.
 
 ```console
@@ -46,9 +47,6 @@ gcloud init
 ```
 
 ### Tools
-
-In order to use the code in this demo you will need access to below tools: 
-
 1. [Terraform >= 0.11.7](https://www.terraform.io/downloads.html)
 2. [Google Cloud SDK version >= 204.0.0](https://cloud.google.com/sdk/docs/downloads-versioned-archives)
 3. [kubectl matching the latest GKE version](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
