@@ -82,7 +82,7 @@ resource "google_monitoring_alert_policy" "prometheus_mem_alloc" {
   conditions = [{
     display_name = "mem alloc above 12"
     condition_threshold = {
-      filter = "metric.type=\"external.googleapis.com/prometheus/go_memstats_alloc_bytes\" AND resource.type=\"k8s_container\""
+      filter = "metric.type=\"custom.googleapis.com/go_memstats_alloc_bytes\" AND resource.type=\"k8s_container\""
       duration = "60s"
       comparison = "COMPARISON_GT"
       threshold_value = 12

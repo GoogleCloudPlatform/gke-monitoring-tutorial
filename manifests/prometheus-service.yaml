@@ -50,7 +50,7 @@ spec:
       serviceAccountName: prometheus
       containers:
       - name: prometheus
-        image: gcr.io/stackdriver-prometheus/stackdriver-prometheus:release-0.4.3
+        image: gcr.io/stackdriver-prometheus/stackdriver-prometheus:release-0.4.1
         # Uncomment this to enable debug logs. Can be very verbose.
         #args: ["--config.file=/etc/prometheus/prometheus.yml", "--log.level=debug"]
         # Helps during development, when reusing the tag.
