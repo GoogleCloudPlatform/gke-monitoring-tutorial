@@ -23,15 +23,15 @@ limitations under the License.
 // Create the primary cluster for this project.
 ///////////////////////////////////////////////////////////////////////////////////////
 data "google_container_engine_versions" "gke_versions" {
-  zone = "${var.zone}"
+  zone = var.zone
 }
 
 // Create the GKE Cluster
 resource "google_container_cluster" "primary" {
   name               = "stackdriver-monitoring-tutorial"
-  zone               = "${var.zone}"
+  zone               = var.zone
   initial_node_count = 1
-  min_master_version = "${data.google_container_engine_versions.gke_versions.latest_master_version}"
+  min_master_version = data.google_container_engine_versions.gke_versions.latest_master_version
 
   # Enable the new Stackdriver Kubernetes Monitoring/Logging features
   monitoring_service = "monitoring.googleapis.com/kubernetes"
@@ -77,31 +77,32 @@ resource "google_container_cluster" "primary" {
 
 resource "google_monitoring_alert_policy" "prometheus_mem_alloc" {
   display_name = "Prometheus mem alloc"
-  combiner = "OR"
-  enabled  = true
-  conditions = [{
+  combiner     = "OR"
+  enabled      = true
+  conditions {
     display_name = "mem alloc above 12"
-    condition_threshold = {
-      filter = "metric.type=\"custom.googleapis.com/go_memstats_alloc_bytes\" AND resource.type=\"k8s_container\""
-      duration = "60s"
-      comparison = "COMPARISON_GT"
+    condition_threshold {
+      filter          = "metric.type=\"custom.googleapis.com/go_memstats_alloc_bytes\" AND resource.type=\"k8s_container\""
+      duration        = "60s"
+      comparison      = "COMPARISON_GT"
       threshold_value = 12
     }
-    }]
-  depends_on = ["google_container_cluster.primary"]
+  }
+  depends_on = [google_container_cluster.primary]
 }
 
 resource "google_project_service" "monitoring" {
-  service = "monitoring.googleapis.com"
+  service            = "monitoring.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_project_service" "container" {
-  service = "container.googleapis.com"
+  service            = "container.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_project_service" "logging" {
-  service = "logging.googleapis.com"
+  service            = "logging.googleapis.com"
   disable_on_destroy = false
 }
+
