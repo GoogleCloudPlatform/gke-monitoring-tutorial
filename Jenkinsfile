@@ -35,7 +35,7 @@ metadata:
 spec:
   containers:
   - name: ${containerName}
-    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:jenkins-cicd_images_builder-185
+    image: gcr.io/pso-helmsman-cicd/jenkins-k8s-node:${env.JENKINS_CONTAINER_VERSION}
     command: ['cat']
     tty: true
     volumeMounts:
