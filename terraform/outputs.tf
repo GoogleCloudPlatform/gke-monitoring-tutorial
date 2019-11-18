@@ -19,6 +19,6 @@ output "cluster_name" {
 }
 
 output "primary_zone" {
-  value = google_container_cluster.primary.zone
+  value = google_container_cluster.primary.location
 }
 
