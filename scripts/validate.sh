@@ -34,7 +34,7 @@ APP_NAME=$(kubectl get deployments -n default \
 APP_MESSAGE="deployment \"$APP_NAME\" successfully rolled out"
 
 cd "$ROOT/terraform" || exit; CLUSTER_NAME=$(terraform output cluster_name) \
-  ZONE=$(terraform output primary_zone)
+  ZONE=$(terraform output primary_location)
 
 # Get credentials for the k8s cluster
 gcloud container clusters get-credentials "$CLUSTER_NAME" --zone="$ZONE"
