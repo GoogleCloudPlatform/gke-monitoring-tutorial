@@ -62,7 +62,7 @@ The Google Cloud SDK is used to interact with your GCP resources.
 
 #### Install kubectl CLI
 
-The kubectl CLI is used to interteract with both Kubernetes Engine and kubernetes in general.
+The kubectl CLI is used to interact with both Kubernetes Engine and kubernetes in general.
 [Installation instructions](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 for multiple platforms are available online.
 
@@ -163,7 +163,7 @@ create resources. If it does, regenerate the application default credentials
 using `gcloud auth application-default login`.
 
 ** Metrics Not Appearing or Uptime Checks not executing **
-After the scripts execute it may take a few minutes for the Metrics or Uptime Checks to appear.  Configure the items and give the system some time to generate metrics and checks as they someimes take time to complete.
+After the scripts execute it may take a few minutes for the Metrics or Uptime Checks to appear.  Configure the items and give the system some time to generate metrics and checks as they sometimes take time to complete.
 
 ## Relevant Material
 * [Stackdriver Kubernetes Monitoring](https://cloud.google.com/monitoring/kubernetes-engine/)
